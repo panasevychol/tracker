@@ -1,28 +1,52 @@
 import sqlite3
 import logging
 
+
 class DatabaseMaster:
 
     DATABASE_NAME = 'tracker.db'
+    USERS_TABLE_NAME = 'users'
 
     def __init__(self):
         self.logger = logging.getLogger('app')
-        self.connection = sqlite3.connect(self.DATABASE_NAME)
-        self.cursor = self.connection.cursor()
+        self.setup_database()
         self.test()
         self.close()
 
     def test(self):
-        self.create_table('users', **{'login': 'string', 'password': 'string'})
-        self.insert_record('users', 2, 'Petro', 'ololo')
+        self.find_record('petro', self.USERS_TABLE_NAME, 'login')
 
+    def setup_database(self):
+        self.connection = sqlite3.connect(self.DATABASE_NAME)
+        self.cursor = self.connection.cursor()
+        self.create_users_table()
+
+    def login_user(self, login, password):
+        user_record = self.find_record(login, self.USERS_TABLE_NAME, 'login')
+        if user_record:
+            if password == user_record[-1]:
+                return
+            else:
+                return 'Incorrect password'
+        else:
+            return 'User not found'
+
+    def add_user(self, login, password, admin_rights=False):
+        if not self.find_record(login, self.USERS_TABLE_NAME, 'login'):
+            self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
+        else:
+            return 'User already exists'
+
+    def create_users_table(self):
+        columns = {'login': 'string', 'password': 'string'}
+        self.create_table(self.USERS_TABLE_NAME, **columns)
 
     def create_table(self, table_name, **kwargs):
         columns = 'id integer'
         for key,value in kwargs.iteritems():
             columns += ', ' + key + ' ' + value
         sql = 'create table if not exists ' + table_name + '(' + columns + ')'
-        self.execute_sql(sql)
+        self.commit_sql(sql)
 
     def insert_record(self, table, *args):
         values = ''
@@ -33,13 +57,27 @@ class DatabaseMaster:
                 values += str(value)
             if index < len(args)-1:
                 values += ', '
-        sql = 'INSERT INTO ' + table + ' VALUES(' + values + ')'
-        self.execute_sql(sql)
+        if values:
+            values = str(self.get_next_value_id(table)) + ', ' + values
+            sql = 'INSERT INTO ' + table + ' VALUES(' + values + ')'
+            self.commit_sql(sql)
 
-    def execute_sql(self,sql):
-        self.logger.info('Executing SQL: ' + sql)
+    def commit_sql(self,sql):
+        self.logger.debug('Executing SQL: ' + sql)
         self.cursor.execute(sql)
         self.connection.commit()
+
+    def get_next_value_id(self, table):
+        sql = 'SELECT Count(*) FROM ' + table
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()[0]
+        return int(result) + 1
+
+    def find_record(self, string, table, column):
+        sql = 'select * from ' + table + ' where ' + column + ' like "%' + string + '%"'
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()
+        return result
 
     def close(self):
         self.cursor.close()
