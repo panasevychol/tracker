@@ -62,6 +62,7 @@ class DatabaseMaster(DatabaseFramework):
     def __init__(self):
         DatabaseFramework.__init__(self, self.DATABASE_NAME)
         self.setup_database()
+        self.close()
 
     def test(self):
         self.find_record('petro', self.USERS_TABLE_NAME, 'login')
@@ -86,5 +87,5 @@ class DatabaseMaster(DatabaseFramework):
             return 'User already exists'
 
     def create_users_table(self):
-        columns = {'login': 'string', 'password': 'string'}
+        columns = {'login': 'string', 'password': 'string', 'admin': 'integer'}
         self.create_table(self.USERS_TABLE_NAME, **columns)

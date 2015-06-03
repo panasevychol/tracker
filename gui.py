@@ -1,52 +1,54 @@
 from Tkinter import *
 
-COLORS = {'white': '#fff',
+
+class GUIFramework:
+
+    COLORS = {'white': '#fff',
           'darkgreen': '#006633',
           'green': '#009966',
           'lightgreen': '#00cc99',
           'lightred': '#ff9966',
           'red': '#ff6633',
           'darkred': '#ff3300'}
-FONT = 'Courier'
+    FONT = 'Courier'
 
-class GUI:
-
-    @staticmethod
-    def create_button(button_name, event, root, x=0, y=0, color='green'):
+    def create_button(self, button_name, event, root, x=0, y=0, color='green'):
         button = Button(root, text=button_name)
         gamma = {'light': '#00cc99', 'middle': '#009966', 'dark': '#006633'}
         if color == 'red':
             gamma = {'light': '#ff9966', 'middle': '#ff6633', 'dark': '#ff3300'}
         button.config(relief=FLAT,
                       bg=gamma['middle'],
-                      fg=COLORS['white'],
+                      fg=self.COLORS['white'],
                       activebackground=gamma['light'],
-                      activeforeground=COLORS['white'],
+                      activeforeground=self.COLORS['white'],
                       height=1,
                       width=10,
-                      font=FONT + ' 16 bold')
+                      font=self.FONT + ' 16 bold')
         button.config(highlightbackground=gamma['middle'])
         button.bind('<Button-1>', event)
         button.pack(padx=5, pady=5)
         button.place(x=x, y=y)
 
-    @staticmethod
-    def create_entry(root, x=0, y=0, show=''):
+    def create_entry(self, root, x=0, y=0, show=''):
         entry = Entry(root, bd = 2)
         entry.config(relief=FLAT,
-                     bg=COLORS['white'],
-                     fg=COLORS['green'],
-                     font=FONT +' 16',
+                     bg=self.COLORS['white'],
+                     fg=self.COLORS['green'],
+                     font=self.FONT +' 16',
                      show=show,
                      width=12,
-                     selectbackground=COLORS['green'],
-                     insertbackground=COLORS['green'])
-        entry.config(highlightbackground=COLORS['green'],
-                     highlightcolor=COLORS['green'])
+                     selectbackground=self.COLORS['green'],
+                     insertbackground=self.COLORS['green'])
+        entry.config(highlightbackground=self.COLORS['green'],
+                     highlightcolor=self.COLORS['green'])
         entry.pack()
         entry.place(x=x, y=y)
 
+class GUI(GUIFramework):
+
     def __init__(self, app):
+        #GUIFramework.__init__(self)
         self.app = app
         self.setup_main_window()
 
@@ -55,7 +57,7 @@ class GUI:
         self.base.resizable(width=FALSE, height=FALSE)
         self.base.minsize(width=640, height=480)
         self.base.config(
-            bg = COLORS['white']
+            bg = self.COLORS['white']
         )
         self.make_all_frames()
 
