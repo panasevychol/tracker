@@ -1,45 +1,15 @@
 import sqlite3
 import logging
 
+class DatabaseFramework:
 
-class DatabaseMaster:
-
-    DATABASE_NAME = 'tracker.db'
-    USERS_TABLE_NAME = 'users'
-
-    def __init__(self):
+    def __init__(self, database_name):
         self.logger = logging.getLogger('app')
-        self.setup_database()
-        self.test()
-        self.close()
+        self.connect_to_database(database_name)
 
-    def test(self):
-        self.find_record('petro', self.USERS_TABLE_NAME, 'login')
-
-    def setup_database(self):
-        self.connection = sqlite3.connect(self.DATABASE_NAME)
+    def connect_to_database(self, database_name):
+        self.connection = sqlite3.connect(database_name)
         self.cursor = self.connection.cursor()
-        self.create_users_table()
-
-    def login_user(self, login, password):
-        user_record = self.find_record(login, self.USERS_TABLE_NAME, 'login')
-        if user_record:
-            if password == user_record[-1]:
-                return
-            else:
-                return 'Incorrect password'
-        else:
-            return 'User not found'
-
-    def add_user(self, login, password, admin_rights=False):
-        if not self.find_record(login, self.USERS_TABLE_NAME, 'login'):
-            self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
-        else:
-            return 'User already exists'
-
-    def create_users_table(self):
-        columns = {'login': 'string', 'password': 'string'}
-        self.create_table(self.USERS_TABLE_NAME, **columns)
 
     def create_table(self, table_name, **kwargs):
         columns = 'id integer'
@@ -82,3 +52,39 @@ class DatabaseMaster:
     def close(self):
         self.cursor.close()
         self.connection.close()
+
+
+class DatabaseMaster(DatabaseFramework):
+
+    DATABASE_NAME = 'tracker.db'
+    USERS_TABLE_NAME = 'users'
+
+    def __init__(self):
+        DatabaseFramework.__init__(self, self.DATABASE_NAME)
+        self.setup_database()
+
+    def test(self):
+        self.find_record('petro', self.USERS_TABLE_NAME, 'login')
+
+    def setup_database(self):
+        self.create_users_table()
+
+    def login_user(self, login, password):
+        user_record = self.find_record(login, self.USERS_TABLE_NAME, 'login')
+        if user_record:
+            if password == user_record[-1]:
+                return
+            else:
+                return 'Incorrect password'
+        else:
+            return 'User not found'
+
+    def add_user(self, login, password, admin_rights=False):
+        if not self.find_record(login, self.USERS_TABLE_NAME, 'login'):
+            self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
+        else:
+            return 'User already exists'
+
+    def create_users_table(self):
+        columns = {'login': 'string', 'password': 'string'}
+        self.create_table(self.USERS_TABLE_NAME, **columns)

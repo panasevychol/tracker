@@ -63,10 +63,10 @@ class GUI:
         self.make_login_form()
 
     def make_login_form(self):
-        self.create_entry(self.base, y=220, x=252)
-        self.create_entry(self.base, show='*', y=260, x=252)
-        self.create_button('Login', event=self.login_user, root=self.base, y=305, x=254)
-        self.create_button('Register', event=self.register_user, root=self.base, y=350, x=254, color='red')
+        self.create_entry(self.base, y=220, x=240)
+        self.create_entry(self.base, show='*', y=260, x=240)
+        self.create_button('Login', event=self.login_user, root=self.base, y=305, x=243)
+        self.create_button('Register', event=self.register_user, root=self.base, y=350, x=243, color='red')
 
     def login_user(self, event):
         pass
