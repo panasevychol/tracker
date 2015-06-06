@@ -25,7 +25,9 @@ class GUIFramework:
                       height=1,
                       width=10,
                       font=self.FONT + ' 16 bold')
-        button.config(highlightbackground=gamma['middle'])
+        button.config(highlightbackground=gamma['middle'],
+                     highlightcolor=self.COLORS['lightgreen'],
+                     highlightthickness=1)
         button.bind('<Button-1>', event)
         button.pack(padx=5, pady=5)
         button.place(x=x, y=y)
