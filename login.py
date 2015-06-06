@@ -4,6 +4,7 @@ class LoginMaster:
 
     def __init__(self, app):
         self.logger = logging.getLogger('app')
+        self.user = None
         self.app = app
         self.db_master = self.app.database_master
 
@@ -11,10 +12,11 @@ class LoginMaster:
         error = self.db_master.login_user(login, password)
         if error:
             self.logger.info('Login failed. ' + error)
+            return error
         else:
-            return login
+            self.user = login
 
-    def add_user(self, login, password):
+    def register_user(self, login, password):
         error = self.db_master.add_user(login, password)
         if not error:
             self.login_user(login, password)

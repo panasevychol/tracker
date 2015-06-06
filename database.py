@@ -62,7 +62,6 @@ class DatabaseMaster(DatabaseFramework):
     def __init__(self):
         DatabaseFramework.__init__(self, self.DATABASE_NAME)
         self.setup_database()
-        self.close()
 
     def test(self):
         self.find_record('petro', self.USERS_TABLE_NAME, 'login')
