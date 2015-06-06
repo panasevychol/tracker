@@ -23,14 +23,13 @@ class GUIFramework:
                       activebackground=gamma['light'],
                       activeforeground=self.COLORS['white'],
                       height=1,
-                      width=10,
                       font=self.FONT + ' 16 bold')
         button.config(highlightbackground=gamma['middle'],
                      highlightcolor=self.COLORS['lightgreen'],
                      highlightthickness=1)
         button.bind('<Button-1>', event)
         button.pack(padx=5, pady=5)
-        button.place(x=x, y=y)
+        button.place(x=x, y=y, width=140)
 
     def create_entry(self, root, x=0, y=0, show=''):
         entry = Entry(root, bd = 2)
@@ -39,14 +38,13 @@ class GUIFramework:
                      fg=self.COLORS['green'],
                      font=self.FONT +' 16',
                      show=show,
-                     width=12,
                      selectbackground=self.COLORS['green'],
                      insertbackground=self.COLORS['green'])
         entry.config(highlightbackground=self.COLORS['green'],
                      highlightcolor=self.COLORS['lightgreen'],
                      highlightthickness=1)
         entry.pack()
-        entry.place(x=x, y=y)
+        entry.place(x=x, y=y, width=140)
 
 class GUI(GUIFramework):
 
@@ -68,10 +66,10 @@ class GUI(GUIFramework):
         self.make_login_form()
 
     def make_login_form(self):
-        self.create_entry(self.base, y=220, x=240)
-        self.create_entry(self.base, show='*', y=260, x=240)
-        self.create_button('Login', event=self.login_user, root=self.base, y=305, x=243)
-        self.create_button('Register', event=self.register_user, root=self.base, y=350, x=243, color='red')
+        self.create_entry(self.base, y=220, x=250)
+        self.create_entry(self.base, show='*', y=260, x=250)
+        self.create_button('Login', event=self.login_user, root=self.base, y=305, x=250)
+        self.create_button('Register', event=self.register_user, root=self.base, y=350, x=250, color='red')
 
     def login_user(self, event):
         pass
