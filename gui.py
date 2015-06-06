@@ -17,6 +17,7 @@ class GUIFramework:
         gamma = {'light': '#00cc99', 'middle': '#009966', 'dark': '#006633'}
         if color == 'red':
             gamma = {'light': '#ff9966', 'middle': '#ff6633', 'dark': '#ff3300'}
+        '''
         button.config(relief=FLAT,
                       bg=gamma['middle'],
                       fg=self.COLORS['white'],
@@ -26,12 +27,14 @@ class GUIFramework:
                       width=10,
                       font=self.FONT + ' 16 bold')
         button.config(highlightbackground=gamma['middle'])
+        '''
         button.bind('<Button-1>', event)
         button.pack(padx=5, pady=5)
         button.place(x=x, y=y)
 
     def create_entry(self, root, x=0, y=0, show=''):
         entry = Entry(root, bd = 2)
+        '''
         entry.config(relief=FLAT,
                      bg=self.COLORS['white'],
                      fg=self.COLORS['green'],
@@ -42,6 +45,7 @@ class GUIFramework:
                      insertbackground=self.COLORS['green'])
         entry.config(highlightbackground=self.COLORS['green'],
                      highlightcolor=self.COLORS['green'])
+        '''
         entry.pack()
         entry.place(x=x, y=y)
 
