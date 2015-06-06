@@ -40,12 +40,29 @@ class GUIFramework:
                      show=show,
                      selectbackground=self.COLORS['green'],
                      insertbackground=self.COLORS['green'])
-        entry.config(highlightbackground=self.COLORS['green'],
-                     highlightcolor=self.COLORS['lightgreen'],
+        entry.config(highlightbackground=self.COLORS['lightgreen'],
+                     highlightcolor=self.COLORS['green'],
                      highlightthickness=1)
         entry.pack()
         entry.place(x=x, y=y, width=200)
         return entry
+
+    def create_text_area(self, root, x=0, y=0):
+        text_area = Text(root)
+        text_area.config(relief=FLAT,
+                     bg=self.COLORS['white'],
+                     fg=self.COLORS['green'],
+                     font=self.FONT +' 16',
+                     height=10,
+                     selectbackground=self.COLORS['green'],
+                     insertbackground=self.COLORS['green'])
+        text_area.config(highlightbackground=self.COLORS['lightgreen'],
+                     highlightcolor=self.COLORS['green'],
+                     highlightthickness=1)
+        text_area.pack()
+        text_area.place(x=x, y=y, width=540)
+        return text_area
+
 
     def create_label(self, text, root, x=0, y=0, size=16, width=500):
         label = Label(root, text=text)
@@ -69,10 +86,10 @@ class GUIFramework:
         for label, command in labels_and_commands.iteritems():
             menu_button.menu.add_command(label=label, command=command)
         menu_button.config(relief=FLAT,
-                      fg=self.COLORS['white'],
-                      bg=gamma['light'],
+                      bg=self.COLORS['white'],
+                      fg=gamma['light'],
                       borderwidth=0,
-                      activebackground=gamma['middle'],
+                      activebackground=gamma['light'],
                       activeforeground=self.COLORS['white'],
                       height=1,
                       font=self.FONT + ' 16')
@@ -80,10 +97,10 @@ class GUIFramework:
                      highlightcolor=gamma['middle'],
                      highlightthickness=1)
         menu_button.menu.config(relief=FLAT,
-                      bg=gamma['light'],
-                      fg=self.COLORS['white'],
+                      fg=gamma['light'],
+                      bg=self.COLORS['white'],
                       borderwidth=0,
-                      activebackground=gamma['middle'],
+                      activebackground=gamma['light'],
                       activeforeground=self.COLORS['white'],
                       font=self.FONT + ' 16')
         menu_button.pack(padx=5, pady=5)
@@ -96,7 +113,6 @@ class GUIFramework:
 class GUI(GUIFramework):
 
     def __init__(self, app):
-        #GUIFramework.__init__(self)
         self.app = app
         self.setup_main_window()
 
@@ -117,12 +133,37 @@ class GUI(GUIFramework):
 
     def display_main_page(self):
         self.clear_window(self.base)
-        self.create_label('Welcome, ' + self.app.login_master.user + '!', self.base, size=32, x=70, y=50)
-        self.create_menu_button('Options', self.base, x=10, y=10, labels_and_commands={'Logout': lambda: self.logout_user_command(), 'Quit': lambda: self.quit()})
+        self.create_label('Welcome, ' + self.app.login_master.user + '!', self.base, size=32, x=70, y=80)
+        self.create_menu_button('Options', self.base, x=20, y=20, labels_and_commands={'Logout': lambda: self.logout_user_command(), 'Quit': lambda: self.quit()})
+        self.create_button('Create task', self.display_create_task_page, self.base, x=220, y=160)
 
     def logout_user_command(self):
         self.app.login_master.logout_user()
         self.display_start_page()
+
+    def display_create_task_page(self):
+        self.clear_window(self.base)
+        self.create_label('Task name:', self.base, x=50, y=20, width=None)
+        task_name_entry = self.create_entry(self.base, x=50, y=50)
+        self.create_label('Assignee:', self.base, x=390, y=20, width=None)
+        assignee_entry = self.create_entry(self.base, x=390, y=50)
+        self.create_label('Task description:', self.base, x=50, y=90, width=None)
+        text_entry = self.create_text_area(self.base, x=50, y=130)
+        self.create_button('Return',
+                           command=lambda: self.display_main_page(),
+                           root=self.base,
+                           y=400, x=50, color='green')
+        self.create_button('Create task',
+                           command=lambda: self.create_task_command(task_name_entry, assignee_entry, text_entry),
+                           root=self.base,
+                           y=400, x=390, color='red')
+
+    def create_task_command(self, name_entry, assignee_entry, text_entry):
+        name = name_entry.get()
+        assignee = assignee_entry.get()
+        print(assignee)
+        text = text_entry.get("1.0", END)
+        self.app.task_master.create_task(name, assignee, text)
 
     def display_login_page(self):
         self.clear_window(self.base)
