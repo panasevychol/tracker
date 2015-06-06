@@ -15,6 +15,7 @@ class LoginMaster:
             return error
         else:
             self.user = login
+            self.logger.info('Successfully login from ' + login)
 
     def register_user(self, login, password):
         error = self.db_master.add_user(login, password)
@@ -22,3 +23,6 @@ class LoginMaster:
             self.login_user(login, password)
         else:
             return error
+
+    def logout_user(self):
+        self.user = None

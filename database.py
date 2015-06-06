@@ -70,21 +70,22 @@ class DatabaseMaster(DatabaseFramework):
         self.create_users_table()
 
     def login_user(self, login, password):
+        self.logger.debug('Searching for user record: ' + login)
         user_record = self.find_record(login, self.USERS_TABLE_NAME, 'login')
         if user_record:
-            if password == user_record[-1]:
+            if password == user_record[-2]:
                 return
             else:
                 return 'Incorrect password'
         else:
             return 'User not found'
 
-    def add_user(self, login, password, admin_rights=False):
+    def add_user(self, login, password, admin_rights=0):
         if not self.find_record(login, self.USERS_TABLE_NAME, 'login'):
             self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
         else:
             return 'User already exists'
 
     def create_users_table(self):
-        columns = {'login': 'string', 'password': 'string', 'admin': 'integer'}
+        columns = {'login': 'string', 'password': 'string', 'admin_rights': 'integer'}
         self.create_table(self.USERS_TABLE_NAME, **columns)

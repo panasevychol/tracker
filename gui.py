@@ -18,12 +18,12 @@ class GUIFramework:
         if color == 'red':
             gamma = {'light': '#ff9966', 'middle': '#ff6633', 'dark': '#ff3300'}
         button.config(relief=FLAT,
-                      bg=gamma['middle'],
+                      bg=gamma['light'],
                       fg=self.COLORS['white'],
-                      activebackground=gamma['light'],
-                      activeforeground=self.COLORS['white'],
+                      activebackground= gamma['middle'],
+                      activeforeground = self.COLORS['white'],
                       height=1,
-                      font=self.FONT + ' 16 bold')
+                      font=self.FONT + ' 16')
         button.config(highlightbackground=gamma['middle'],
                      highlightcolor=self.COLORS['lightgreen'],
                      highlightthickness=1)
@@ -54,6 +54,40 @@ class GUIFramework:
                      fg=self.COLORS['green'],)
         label.pack()
         label.place(x=x, y=y, width=width)
+        return label
+
+    def create_menu_button(self, button_name, root, x=0, y=0, color='green', labels_and_commands=None):
+        if not labels_and_commands:
+            labels_and_commands = {}
+        gamma = {'light': '#00cc99', 'middle': '#009966', 'dark': '#006633'}
+        if color == 'red':
+            gamma = {'light': '#ff9966', 'middle': '#ff6633', 'dark': '#ff3300'}
+        menu_button = Menubutton(root, text=button_name)
+        menu_button.grid()
+        menu_button.menu = Menu(menu_button, tearoff = 0)
+        menu_button['menu']  =  menu_button.menu
+        for label, command in labels_and_commands.iteritems():
+            menu_button.menu.add_command(label=label, command=command)
+        menu_button.config(relief=FLAT,
+                      fg=self.COLORS['white'],
+                      bg=gamma['light'],
+                      borderwidth=0,
+                      activebackground=gamma['middle'],
+                      activeforeground=self.COLORS['white'],
+                      height=1,
+                      font=self.FONT + ' 16')
+        menu_button.config(highlightbackground=gamma['light'],
+                     highlightcolor=gamma['middle'],
+                     highlightthickness=1)
+        menu_button.menu.config(relief=FLAT,
+                      bg=gamma['light'],
+                      fg=self.COLORS['white'],
+                      borderwidth=0,
+                      activebackground=gamma['middle'],
+                      activeforeground=self.COLORS['white'],
+                      font=self.FONT + ' 16')
+        menu_button.pack(padx=5, pady=5)
+        menu_button.place(x=x, y=y, width=100)
 
     def clear_window(self, window):
         for widget in window.winfo_children():
@@ -76,10 +110,23 @@ class GUI(GUIFramework):
         self.display_start_page()
 
     def display_start_page(self):
-        self.display_login_page()
+        if self.app.login_master.user:
+            self.display_main_page()
+        else:
+            self.display_login_page()
+
+    def display_main_page(self):
+        self.clear_window(self.base)
+        self.create_label('Welcome, ' + self.app.login_master.user + '!', self.base, size=32, x=70, y=50)
+        self.create_menu_button('Options', self.base, x=10, y=10, labels_and_commands={'Logout': lambda: self.logout_user_command(), 'Quit': lambda: self.quit()})
+
+    def logout_user_command(self):
+        self.app.login_master.logout_user()
+        self.display_start_page()
 
     def display_login_page(self):
         self.clear_window(self.base)
+        self.create_label('Welcome to Tracker!', self.base, size=28, x=70, y=50)
         self.create_label('Login:', self.base, x=220, y=165, width=None)
         login_entry = self.create_entry(self.base, y=195, x=220)
         self.create_label('Password:', self.base, x=220, y=230, width=None)
@@ -96,17 +143,23 @@ class GUI(GUIFramework):
         error = self.app.login_master.login_user(login, password)
         if error:
             self.display_error_page(error, self.display_login_page)
+        else:
+            self.display_main_page()
 
     def register_user_command(self, login_entry, password_entry, confirm_password_entry):
         login = login_entry.get()
         password = password_entry.get()
         confirm_password = confirm_password_entry.get()
-        if password != confirm_password:
+        if not login or not password or not confirm_password:
+            self.display_error_page('Required fields are empty', self.display_register_page)
+        elif password != confirm_password:
             self.display_error_page('Passwords do not match', self.display_register_page)
         else:
             error = self.app.login_master.register_user(login, password)
             if error:
-                pass
+                self.display_error_page(error, self.display_register_page)
+            else:
+                self.display_start_page()
 
     def display_error_page(self, error_text, return_window_display_function):
         self.clear_window(self.base)
@@ -119,8 +172,11 @@ class GUI(GUIFramework):
 
     def display_register_page(self):
         self.clear_window(self.base)
-        login_entry = self.create_entry(self.base, y=180, x=220)
-        password_entry = self.create_entry(self.base, show='*', y=220, x=220)
+        self.create_label('Login:', self.base, x=220, y=90, width=None)
+        login_entry = self.create_entry(self.base, y=120, x=220)
+        self.create_label('Password:', self.base, x=220, y=160, width=None)
+        password_entry = self.create_entry(self.base, show='*', y=190, x=220)
+        self.create_label('Confirm password:', self.base, x=220, y=230, width=None)
         confirm_password_entry = self.create_entry(self.base, show='*', y=260, x=220)
         self.create_button('Register',
                            command=lambda: self.register_user_command(login_entry, password_entry, confirm_password_entry),
@@ -133,4 +189,7 @@ class GUI(GUIFramework):
 
     def run(self):
         self.base.mainloop()
+
+    def quit(self):
+        self.base.destroy()
         self.app.quit()
