@@ -41,8 +41,13 @@ class GUI(GUIFramework):
     def display_browse_task_page(self, task_listbox):
         task_name = task_listbox.get(task_listbox.curselection())
         self.clear_window(self.base)
-        self.create_label_frame(self.base, 'Task: ' + str(task_name), x=40, y=90)
-
+        task_frame = self.create_label_frame(self.base, 'Task: ' + str(task_name), x=40, y=90)
+        task_text = self.app.task_master.get_task_text(task_name)
+        self.create_label(task_text, task_frame, x=5, y=10, width=None)
+        self.create_button('Return',
+                           command=lambda: self.display_main_page(),
+                           root=self.base,
+                           y=410, x=40, color='green')
 
     def logout_user_command(self):
         self.app.login_master.logout_user()
@@ -89,7 +94,6 @@ class GUI(GUIFramework):
         password_entry = self.create_entry(self.base, show='*', y=260, x=220)
         self.create_button('Login', command=lambda: self.login_user_command(login_entry=login_entry, password_entry=password_entry), root=self.base, y=305, x=220)
         self.create_button('Register', command=lambda: self.display_register_page(), root=self.base, y=350, x=220, color='red')
-        self.create_button('Quit', command=lambda: self.quit(), root=self.base, y=395, x=220)
 
     def login_user_command(self, login_entry, password_entry):
         login = login_entry.get()

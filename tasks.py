@@ -23,6 +23,11 @@ class TaskMaster:
         return tasks
 
     def get_task_state(self, task_name):
-        result = self.app.database_master.get_task_state(task_name)
+        result = self.app.database_master.get_task_record(task_name)[0][-2]
         if result:
             return self.STATES[result]
+
+    def get_task_text(self, task_name):
+        result = self.app.database_master.get_task_record(task_name)[2]
+        if result:
+            return result

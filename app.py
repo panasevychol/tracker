@@ -11,8 +11,8 @@ class App:
     @staticmethod
     def get_logger(name):
         logger = logging.getLogger(name)
-        std_handler = logging.StreamHandler()
-        logger.addHandler(std_handler)
+        handler = logging.StreamHandler()
+        logger.addHandler(handler)
         return logger
 
     def __init__(self, debug=False):
