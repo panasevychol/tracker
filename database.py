@@ -43,7 +43,7 @@ class DatabaseFramework:
     def execute_sql(self, sql):
         self.logger.debug('Executing SQL: ' + sql)
         self.cursor.execute(sql)
-        return self.cursor.fetchone()
+        return self.cursor.fetchall()
 
     def get_next_value_id(self, table):
         sql = 'SELECT Count(*) FROM ' + table
