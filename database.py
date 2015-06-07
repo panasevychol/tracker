@@ -1,5 +1,6 @@
 import sqlite3
 import logging
+import time
 
 class DatabaseFramework:
 
@@ -35,9 +36,14 @@ class DatabaseFramework:
             self.commit_sql(sql)
 
     def commit_sql(self,sql):
-        self.logger.debug('Executing SQL: ' + sql)
+        self.logger.debug('Commiting SQL: ' + sql)
         self.cursor.execute(sql)
         self.connection.commit()
+
+    def execute_sql(self, sql):
+        self.logger.debug('Executing SQL: ' + sql)
+        self.cursor.execute(sql)
+        return self.cursor.fetchone()
 
     def get_next_value_id(self, table):
         sql = 'SELECT Count(*) FROM ' + table
@@ -92,6 +98,12 @@ class DatabaseMaster(DatabaseFramework):
         else:
             return 'User already exists'
 
+    def get_all_logins(self):
+        sql = 'SELECT login FROM ' + self.USERS_TABLE_NAME
+        logins = self.execute_sql(sql)
+        print(logins)
+        return tuple(logins)
+
     def create_all_tables(self):
         self.create_users_table()
         self.create_tasks_table()
@@ -101,10 +113,10 @@ class DatabaseMaster(DatabaseFramework):
         self.create_table(self.USERS_TABLE_NAME, None, **columns)
 
     def create_tasks_table(self):
-        columns = {'name': 'string', 'text': 'string', 'owner_id': 'integer', 'state': 'integer', 'timestamp' : 'DATETIME DEFAULT CURRENT_TIMESTAMP'}
+        columns = {'name': 'string', 'text': 'string', 'owner_id': 'integer', 'state': 'integer', 'timestamp' : 'string'}
         relationship_options = self.get_relationship_command('owner_id', self.USERS_TABLE_NAME, 'id')
         self.create_table(self.TASKS_TABLE_NAME, relationship_options, **columns)
 
     def create_task(self, name, text, owner, state):
         owner_id = self.find_record(owner,self.USERS_TABLE_NAME, 'login')[0]
-        self.insert_record(self.TASKS_TABLE_NAME, name, text, owner_id, state)
+        self.insert_record(self.TASKS_TABLE_NAME, name, text, owner_id, state, time.ctime())

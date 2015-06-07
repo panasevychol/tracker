@@ -26,3 +26,7 @@ class LoginMaster:
 
     def logout_user(self):
         self.user = None
+
+    def get_users_list(self):
+        users = self.db_master.get_all_logins()
+        return users

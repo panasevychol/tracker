@@ -106,6 +106,26 @@ class GUIFramework:
         menu_button.pack(padx=5, pady=5)
         menu_button.place(x=x, y=y, width=100)
 
+    def create_listbox(self, root, x=0, y=0, options=None):
+        if not options:
+            options = ()
+        listbox = Listbox(root)
+        listbox.config(relief=FLAT,
+                     bg=self.COLORS['white'],
+                     fg=self.COLORS['green'],
+                     font=self.FONT +' 16',
+                     height=1,
+                     selectbackground=self.COLORS['green'],
+                       selectmode=SINGLE)
+        listbox.config(highlightbackground=self.COLORS['lightgreen'],
+                     highlightcolor=self.COLORS['green'],
+                     highlightthickness=1)
+        for number, option in enumerate(options):
+            listbox.insert(number, option)
+        listbox.pack()
+        listbox.place(x=x, y=y, width=200)
+        return listbox
+
     def clear_window(self, window):
         for widget in window.winfo_children():
             widget.destroy()
@@ -142,11 +162,12 @@ class GUI(GUIFramework):
         self.display_start_page()
 
     def display_create_task_page(self):
+        users = self.app.login_master.get_users_list()
         self.clear_window(self.base)
         self.create_label('Task name:', self.base, x=50, y=20, width=None)
         task_name_entry = self.create_entry(self.base, x=50, y=50)
         self.create_label('Assignee:', self.base, x=390, y=20, width=None)
-        assignee_entry = self.create_entry(self.base, x=390, y=50)
+        assignee_listbox = self.create_listbox(self.base, x=390, y=50, options=users)
         self.create_label('Task description:', self.base, x=50, y=90, width=None)
         text_entry = self.create_text_area(self.base, x=50, y=130)
         self.create_button('Return',
@@ -154,16 +175,15 @@ class GUI(GUIFramework):
                            root=self.base,
                            y=400, x=50, color='green')
         self.create_button('Create task',
-                           command=lambda: self.create_task_command(task_name_entry, assignee_entry, text_entry),
+                           command=lambda: self.create_task_command(task_name_entry, assignee_listbox, text_entry),
                            root=self.base,
                            y=400, x=390, color='red')
 
     def create_task_command(self, name_entry, assignee_entry, text_entry):
         name = name_entry.get()
         assignee = assignee_entry.get()
-        print(assignee)
-        text = text_entry.get("1.0", END)
-        self.app.task_master.create_task(name, assignee, text)
+        text = str(text_entry.get("1.0", END))
+        self.app.task_master.create_task(name=name, text=text, owner=assignee)
 
     def display_login_page(self):
         self.clear_window(self.base)
