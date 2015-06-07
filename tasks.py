@@ -10,4 +10,15 @@ class TaskMaster:
 
     def create_task(self, name, text, owner):
         self.logger.info('Creating new task: ' + name + ' for ' + owner)
-        self.app.database_master.create_task(name=name, text=text, owner=owner, state=self.STATES['new'])
+        error = self.app.database_master.create_task(name=name, text=text, owner=owner, state=self.STATES['new'])
+        if error:
+            error = 'Error while creating task "' + name + '" for ' + owner + ': \n' + error
+            self.logger.error(error)
+            return error
+
+    def get_current_user_tasks(self):
+        tasks = []
+        result = self.app.database_master.get_user_tasks(self.app.login_master.user)
+        for task in result:
+            tasks.append(task[1])
+        return tasks
