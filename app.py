@@ -31,4 +31,5 @@ class App:
         self.gui.run()
 
     def quit(self):
-        pass
+        self.database_master.quit()
+        self.logger.info('Goodbye!')

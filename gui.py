@@ -89,6 +89,7 @@ class GUI(GUIFramework):
         password_entry = self.create_entry(self.base, show='*', y=260, x=220)
         self.create_button('Login', command=lambda: self.login_user_command(login_entry=login_entry, password_entry=password_entry), root=self.base, y=305, x=220)
         self.create_button('Register', command=lambda: self.display_register_page(), root=self.base, y=350, x=220, color='red')
+        self.create_button('Quit', command=lambda: self.quit(), root=self.base, y=395, x=220)
 
     def login_user_command(self, login_entry, password_entry):
         login = login_entry.get()
@@ -155,7 +156,7 @@ class GUI(GUIFramework):
 
     def run(self):
         self.base.mainloop()
+        self.app.quit()
 
     def quit(self):
         self.base.destroy()
-        self.app.quit()

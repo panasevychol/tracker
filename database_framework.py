@@ -56,7 +56,7 @@ class DatabaseFramework:
         result = self.cursor.fetchall()
         return result
 
-    def close(self):
+    def quit(self):
         self.cursor.close()
         self.connection.close()
 
