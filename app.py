@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import gui
 import database
@@ -7,8 +8,20 @@ import tasks
 
 class App:
 
-    def __init__(self):
-        self.logger = logging.basicConfig(level='DEBUG')
+    @staticmethod
+    def get_logger(name):
+        logger = logging.getLogger(name)
+        std_handler = logging.StreamHandler()
+        logger.addHandler(std_handler)
+        return logger
+
+    def __init__(self, debug=False):
+        self.logger = self.get_logger('app')
+        if debug:
+            self.logger.setLevel('DEBUG')
+        else:
+            self.logger.setLevel('INFO')
+        self.logger.info('Tracker is started!')
         self.database_master = database.DatabaseMaster()
         self.login_master = login.LoginMaster(self)
         self.task_master = tasks.TaskMaster(self)

@@ -70,9 +70,11 @@ class GUI(GUIFramework):
         if not assignee or not name or not text:
             self.display_error_page('Required fields are empty', self.display_create_task_page)
         else:
-            self.app.task_master.create_task(name=name, text=text, owner=assignee)
-            #tkMessageBox.showinfo('Message', 'New task created!', parent=self.base)
-            self.display_message_page('Task "' + name + '" for ' + assignee + ' created!', self.display_main_page)
+            error = self.app.task_master.create_task(name=name, text=text, owner=assignee)
+            if error:
+                self.display_error_page(error, self.display_create_task_page)
+            else:
+                self.display_message_page('Task "' + name + '" for ' + assignee + ' created!', self.display_main_page)
 
     def display_login_page(self):
         self.clear_window(self.base)

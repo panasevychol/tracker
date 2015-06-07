@@ -30,10 +30,9 @@ class DatabaseMaster(DatabaseFramework):
             return 'User not found'
 
     def add_user(self, login, password, admin_rights=0):
-        if not self.find_record(login, self.USERS_TABLE_NAME, 'login'):
-            self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
-        else:
+        if self.find_record(login, self.USERS_TABLE_NAME, 'login'):
             return 'User already exists'
+        self.insert_record(self.USERS_TABLE_NAME, login, password, admin_rights)
 
     def get_all_logins(self):
         sql = 'SELECT login FROM ' + self.USERS_TABLE_NAME
@@ -45,16 +44,20 @@ class DatabaseMaster(DatabaseFramework):
         self.create_tasks_table()
 
     def create_users_table(self):
-        columns = {'login': 'string', 'password': 'string', 'admin_rights': 'integer'}
-        self.create_table(self.USERS_TABLE_NAME, None, **columns)
+        columns_string = 'login string, password string, admin_rights integer'
+        self.create_table(self.USERS_TABLE_NAME, None, columns_string)
 
     def create_tasks_table(self):
-        columns = {'name': 'string', 'text': 'string', 'owner_id': 'integer', 'state': 'integer', 'timestamp' : 'string'}
+        columns_string = 'name string, text string, owner_id integer, state integer, timestamp string'
         relationship_options = self.get_relationship_command('owner_id', self.USERS_TABLE_NAME, 'id')
-        self.create_table(self.TASKS_TABLE_NAME, relationship_options, **columns)
+        self.create_table(self.TASKS_TABLE_NAME, relationship_options, columns_string)
 
     def create_task(self, name, text, owner, state):
         name, text = str(name), str(text)
+        search_result = self.find_record(name, self.TASKS_TABLE_NAME, 'name')
+        print(search_result)
+        if search_result:
+            return 'Task "' + name + '" already exists'
         owner_id = self.find_record(owner,self.USERS_TABLE_NAME, 'login')[0][0]
         self.insert_record(self.TASKS_TABLE_NAME, name, text, owner_id, state, time.ctime())
 

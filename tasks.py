@@ -12,7 +12,6 @@ class TaskMaster:
         self.logger.info('Creating new task: ' + name + ' for ' + owner)
         error = self.app.database_master.create_task(name=name, text=text, owner=owner, state=self.STATES['new'])
         if error:
-            error = 'Error while creating task "' + name + '" for ' + owner + ': \n' + error
             self.logger.error(error)
             return error
 
@@ -22,3 +21,6 @@ class TaskMaster:
         for task in result:
             tasks.append(task[1])
         return tasks
+
+    def get_task_state(self, task_name):
+        pass

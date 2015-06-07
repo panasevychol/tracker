@@ -11,13 +11,11 @@ class DatabaseFramework:
         self.connection = sqlite3.connect(database_name)
         self.cursor = self.connection.cursor()
 
-    def create_table(self, table_name, relationship_options, **kwargs):
-        columns = 'id integer'
-        for key,value in kwargs.iteritems():
-            columns += ', ' + key + ' ' + value
+    def create_table(self, table_name, relationship_options, columns_string):
+        columns_string = 'id integer, ' + columns_string
         if relationship_options:
-            columns += ', ' + relationship_options
-        sql = 'create table if not exists ' + table_name + '(' + columns + ')'
+            columns_string += ', ' + relationship_options
+        sql = 'create table if not exists ' + table_name + '(' + columns_string + ')'
         self.commit_sql(sql)
 
     def insert_record(self, table, *args):
@@ -51,7 +49,9 @@ class DatabaseFramework:
         return int(result) + 1
 
     def find_record(self, string, table, column):
-        sql = 'select * from ' + str(table) + ' where ' + str(column) + ' like "%' + str(string) + '%"'
+        string, table, column = str(string), str(table), str(column)
+        self.logger.debug('Searching for "' + string + '" in table "' + table + '", column "' + column + '".')
+        sql = 'select * from ' + table + ' where ' +  column + ' like "%' + string + '%"'
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         return result
