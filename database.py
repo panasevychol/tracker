@@ -65,3 +65,19 @@ class DatabaseMaster(DatabaseFramework):
         owner_id = self.find_record(login, self.USERS_TABLE_NAME, 'login')[0][0]
         result = self.find_record(owner_id, self.TASKS_TABLE_NAME, 'owner_id')
         return result
+
+    def get_task_state(self, task_name):
+        result = self.find_record(task_name, self.TASKS_TABLE_NAME, 'name')
+        if result:
+            return result[0][-2]
+        self.logger.debug('Task "' + task_name + '" not found.')
+
+    def get_task_owner(self, task_name):
+        result = self.find_record(task_name, self.TASKS_TABLE_NAME, 'name')
+        if result:
+            owner_id = result[0][-3]
+            owner = self.find_record(owner_id, self.USERS_TABLE_NAME, 'id')[0][1]
+            if owner:
+                return owner
+            self.logger.debug('Owner for "' + task_name + '" not found.')
+        self.logger.debug('Task "' + task_name + '" not found.')

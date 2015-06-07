@@ -11,6 +11,21 @@ class GUIFramework:
           'darkred': '#ff3300'}
     FONT = 'Courier'
 
+    def create_label_frame(self, root, title, x=0, y=0, width=None, height=None):
+        label_frame = LabelFrame(root, text=title)
+        label_frame.config(relief=FLAT,
+                           font=self.FONT + ' 16',
+                           bg=self.COLORS['white'],
+                           fg=self.COLORS['lightgreen'],
+                           bd=1,
+                           width=width,
+                           height=height)
+        label_frame.config(highlightbackground=self.COLORS['lightgreen'],
+                           highlightcolor=self.COLORS['green'],
+                           highlightthickness=1)
+        label_frame.pack(padx=x, pady=y, fill="both", expand="yes")
+        return label_frame
+
     def create_top_window(self, name, root):
         top_window = Toplevel(root)
         top_window.resizable(width=FALSE, height=FALSE)

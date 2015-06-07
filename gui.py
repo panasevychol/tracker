@@ -10,6 +10,7 @@ class GUI(GUIFramework):
 
     def setup_main_window(self):
         self.base = Tk()
+        self.base.wm_title('Tracker')
         self.base.option_add('*Dialog.msg.font', self.FONT)
         self.base.resizable(width=FALSE, height=FALSE)
         self.base.minsize(width=640, height=480)
@@ -32,13 +33,16 @@ class GUI(GUIFramework):
         tasks = self.app.task_master.get_current_user_tasks()
         if tasks:
             self.create_label(self.app.login_master.user + "'s tasks:", self.base, x=20, y=90, width=None)
-            self.create_listbox(self.base, x=20, y=130, width=600, options=tasks)
-            self.create_button('Browse task', self.display_browse_task_page, self.base, x=20, y=400)
+            task_listbox = self.create_listbox(self.base, x=20, y=130, width=600, options=tasks)
+            self.create_button('Browse task', command=lambda : self.display_browse_task_page(task_listbox), root=self.base, x=20, y=400)
         else:
             self.create_label('No tasks for you\nYou can create some\nby clicking a button below', self.base, width=640, y=180)
 
-    def display_browse_task_page(self):
+    def display_browse_task_page(self, task_listbox):
+        task_name = task_listbox.get(task_listbox.curselection())
         self.clear_window(self.base)
+        self.create_label_frame(self.base, 'Task: ' + str(task_name), x=40, y=90)
+
 
     def logout_user_command(self):
         self.app.login_master.logout_user()
@@ -74,7 +78,7 @@ class GUI(GUIFramework):
             if error:
                 self.display_error_page(error, self.display_create_task_page)
             else:
-                self.display_message_page('Task "' + name + '" for ' + assignee + ' created!', self.display_main_page)
+                self.display_message_page('New task for ' + assignee + ' created!', self.display_main_page)
 
     def display_login_page(self):
         self.clear_window(self.base)
