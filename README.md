@@ -19,6 +19,7 @@ Because that's cross-platform powerful library that included in standard Python 
 
 ##### How to run Tracker?
 If you have python installed in your system just open your directory with Tracker and execute the following command from console:
+
 ```python run.py```
 
 
