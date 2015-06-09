@@ -24,5 +24,5 @@ If you have python installed in your system just open your directory with Tracke
 
 
 ```Python 2.7``` is already installed on MacOS X, Ubuntu and some other Linuxes.
-On Windows you have to install ```Python 2.7```. You can get in from the official site: https://www.python.org/
+On Windows you have to install ```Python 2.7```. You can get in from the official site: https://www.python.org/<br>
 Don't forget to add Python to ```PATH``` environmental variable (there's an option in Python install package)
