@@ -16,3 +16,12 @@ Because that's cross-platform powerful library that included in standard Python 
 ##### Functionality:
 - user registration
 - ability to create task and assign it to any Tracker user
+
+##### How to run Tracker?
+If you have python installed in your system just open your directory with Tracker and execute the following command from console:
+```python run.py```
+
+
+```Python 2.7``` is already installed on MacOS X, Ubuntu and some other Linuxes.
+On Windows you have to install ```Python 2.7```. You can get in from the official site: https://www.python.org/
+Don't forget to add Python to ```PATH``` environmental variable (there's an option in Python install package)
