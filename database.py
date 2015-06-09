@@ -55,7 +55,6 @@ class DatabaseMaster(DatabaseFramework):
     def create_task(self, name, text, owner, state):
         name, text = str(name), str(text)
         search_result = self.find_record(name, self.TASKS_TABLE_NAME, 'name')
-        print(search_result)
         if search_result:
             return 'Task "' + name + '" already exists'
         owner_id = self.find_record(owner,self.USERS_TABLE_NAME, 'login')[0][0]
@@ -71,3 +70,6 @@ class DatabaseMaster(DatabaseFramework):
         if result:
             return result[0]
         self.logger.debug('Task "' + task_name + '" not found.')
+
+    def update_task_state(self, id, new_state):
+        return self.update_record(self.TASKS_TABLE_NAME, 'state', id, new_state)

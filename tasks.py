@@ -19,7 +19,8 @@ class TaskMaster:
         tasks = []
         result = self.app.database_master.get_user_tasks(self.app.login_master.user)
         for task in result:
-            tasks.append(task[1])
+            if task[-2] != 3:
+                tasks.append(task[1])
         return tasks
 
     def get_task_state(self, task_name):
@@ -31,3 +32,9 @@ class TaskMaster:
         result = self.app.database_master.get_task_record(task_name)[2]
         if result:
             return result
+
+    def close_task(self, task_name):
+        task_record = self.app.database_master.get_task_record(task_name)
+        error = self.app.database_master.update_task_state(task_record[0], 3)
+        if error:
+            return 'Error while closing task "' + task_name + '": ' + error

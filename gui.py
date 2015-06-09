@@ -39,7 +39,11 @@ class GUI(GUIFramework):
             self.create_label('No tasks for you\nYou can create some\nby clicking a button below', self.base, width=640, y=180)
 
     def display_browse_task_page(self, task_listbox):
-        task_name = task_listbox.get(task_listbox.curselection())
+        try:
+            task_name = task_listbox.get(task_listbox.curselection())
+        except:
+            self.display_error_page('No task chosen', self.display_main_page)
+            return
         self.clear_window(self.base)
         task_frame = self.create_label_frame(self.base, 'Task: ' + str(task_name), x=40, y=90)
         task_text = self.app.task_master.get_task_text(task_name)
@@ -48,6 +52,17 @@ class GUI(GUIFramework):
                            command=lambda: self.display_main_page(),
                            root=self.base,
                            y=410, x=40, color='green')
+        self.create_button('Close task',
+                           command=lambda: self.close_task_command(task_name),
+                           root=self.base,
+                           y=410, x=400, color='red')
+
+    def close_task_command(self, task_name):
+        error = self.app.task_master.close_task(task_name)
+        if error:
+            self.display_error_page(error, self.display_main_page())
+        else:
+            self.display_message_page('Task "' + str(task_name) + '" closed.', self.display_main_page)
 
     def logout_user_command(self):
         self.app.login_master.logout_user()

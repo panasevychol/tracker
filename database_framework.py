@@ -34,8 +34,11 @@ class DatabaseFramework:
 
     def commit_sql(self,sql):
         self.logger.debug('Commiting SQL: ' + sql)
-        self.cursor.execute(sql)
-        self.connection.commit()
+        try:
+            self.cursor.execute(sql)
+            self.connection.commit()
+        except Exception as e:
+            return str(e)
 
     def execute_sql(self, sql):
         self.logger.debug('Executing SQL: ' + sql)
@@ -62,3 +65,9 @@ class DatabaseFramework:
 
     def get_relationship_command(self, daughter_table_column, mother_table, mother_table_column):
         return 'FOREIGN KEY('+ daughter_table_column + ') REFERENCES '+ mother_table + '(' + mother_table_column + ')'
+
+    def update_record(self, table, column, id, new_definition):
+        if isinstance(new_definition, str):
+            new_definition = '"' + new_definition + '"'
+        sql = 'UPDATE '+ table + ' SET '+ column + ' = "' + str(new_definition) + '" WHERE id = ' + str(id) + ';'
+        return self.commit_sql(sql)
